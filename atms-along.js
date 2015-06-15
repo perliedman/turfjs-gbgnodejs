@@ -36,11 +36,12 @@ function findAtms(route) {
 
         map.on('mousemove', function(e) {
             var p = turf.point([e.latlng.lng, e.latlng.lat]),
-                pointOnLine = turf.pointOnLine(line, p);
+                pointOnLine = turf.pointOnLine(line, p),
+                nearest = turf.nearest(pointOnLine, nearbyAtms);
             lineMarker.clearLayers();
             lineMarker.addData(pointOnLine);
             closestAtm.clearLayers();
-            closestAtm.addData(turf.nearest(pointOnLine, nearbyAtms));
+            closestAtm.addData(nearest);
         });
     });
 }

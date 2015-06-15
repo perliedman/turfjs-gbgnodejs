@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Foo</title>
+<meta charset='utf-8' />
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' />
+<style type='text/css'>
+body {
+  background:#000;
+  color:#fff;
+  font-family:'Georgia';
+  margin:0;
+}
+
+@-webkit-keyframes blinker {
+  from { opacity: 1.0; }
+  to { opacity: 0.0; }
+}
+
+em {
+  -webkit-animation-name: blinker;
+  -webkit-animation-iteration-count: infinite;
+  -webkit-animation-timing-function: cubic-bezier(1.0,0,0,1.0);
+  -webkit-animation-duration: 800ms;
+}
+
+strong {
+  font-weight:normal;
+  color:#FFF707;
+}
+
+a {
+  color:#FFF707;
+  text-decoration:none;
+}
+
+div {
+  cursor:pointer;
+  cursor:hand;
+  position:absolute;
+  top:0;
+  left:0;
+}
+
+</style>
+<script type='text/javascript'>
+window.onload = function() {
+    var s = document.getElementsByTagName('div'), cur = 0, ti;
+    if (!s) return;
+    function go(n) {
+        cur = n;
+        var i = 1e3, e = s[n], t;
+        for (var k = 0; k < s.length; k++) s[k].style.display = 'none';
+        e.style.display = 'inline';
+        e.style.fontSize = i + 'px';
+        if (e.firstChild.nodeName === 'IMG') {
+            document.body.style.backgroundImage = 'url(' + e.firstChild.src + ')';
+            e.firstChild.style.display = 'none';
+            if ('classList' in e) e.classList.add('imageText');
+        } else {
+            document.body.style.backgroundImage = '';
+            document.body.style.backgroundColor = e.style.backgroundColor;
+        }
+        if (ti !== undefined) window.clearInterval(ti);
+        t = parseInt(e.getAttribute('time-to-next') || 0, 10);
+        if (t > 0) ti = window.setTimeout(fwd, (t * 1000));
+        while (
+            e.offsetWidth > window.innerWidth ||
+            e.offsetHeight > window.innerHeight) {
+            e.style.fontSize = (i -= 5) + 'px';
+            if (i < 0) break;
+        }
+        e.style.marginTop = ((window.innerHeight - e.offsetHeight) / 2) + 'px';
+        if (window.location.hash !== n) window.location.hash = n;
+        document.title = e.textContent || e.innerText;
+    }
+    document.onclick = function() { go(++cur % (s.length)); };
+    function fwd() { go(Math.min(s.length - 1, ++cur)); }
+    function rev() { go(Math.max(0, --cur)); }
+    document.onkeydown = function(e) {
+        if (e.which === 39) fwd();
+        if (e.which === 37) rev();
+    };
+    document.ontouchstart = function(e) {
+        var x0 = e.changedTouches[0].pageX;
+        document.ontouchend = function(e) {
+            var x1 = e.changedTouches[0].pageX;
+            if (x1 - x0 < 0) fwd();
+            if (x1 - x0 > 0) rev();
+        };
+    };
+    function parse_hash() {
+        return Math.max(Math.min(
+            s.length - 1,
+            parseInt(window.location.hash.substring(1), 10)), 0);
+    }
+    if (window.location.hash) cur = parse_hash() || cur;
+    window.onhashchange = function() {
+        var c = parse_hash();
+        if (c !== cur) go(c);
+    };
+
+    go(cur);
+};
+</script></head><body>
+<div><h2 id="-turf-js-http-turfjs-org-"><a href="http://turfjs.org">turf.js</a></h2>
+<p>spatial for JavaScript</p>
+</div>
+<div><p>How long was my run?</p>
+</div>
+<div><p>Which is the closest ATM from my current location?</p>
+</div>
+<div><h2 id="one-lib-with-many-functions">One lib with many functions</h2>
+</div>
+<div><p>...or many libraries with one function each</p>
+<p>(at least 95 libs)</p>
+</div>
+<div><h2 id="heavy-weight-server-gis">Heavy weight server GIS</h2>
+</div>
+<div><p>...but in the browser (or in Node, of course)</p>
+</div>
+<div><p><a href="http://geojson.org">GeoJSON</a></p>
+</div>
+<div><pre><code class="lang-json">{
+    &quot;type&quot;: &quot;Point&quot;,
+    &quot;coordinates&quot;: [11.7, 57.7]
+}
+</code></pre>
+</div>
+<div><pre><code class="lang-json">{
+    &quot;type&quot;: &quot;LineString&quot;,
+    &quot;coordinates&quot;: [[11, 57], [12, 58]]
+}
+</code></pre>
+</div>
+<div><pre><code class="lang-json">{
+    &quot;type&quot;: &quot;Feature&quot;,
+    &quot;geometry&quot;: {
+        &quot;type&quot;: &quot;Point&quot;,
+        &quot;coordinates&quot;: [11.7, 57.7]
+    },
+    &quot;properties&quot;: {
+        &quot;name&quot;: &quot;Göteborg&quot;,
+        &quot;population&quot;: 491630
+    }
+}
+</code></pre>
+</div>
+<div><p>Demo</p>
+<p><a href="atms.html">Find nearest ATM</a></p>
+</div>
+<div><pre>function findAtms(latlng) {
+    var location = 
+        <strong>turf.point([latlng.lng, latlng.lat])</strong>;
+
+    atmsRequest.then(function(resp) {
+        atms = atms || resp;
+        var nearest = <strong>turf.nearest(location, atms)</strong>;
+        atmLayer.clearLayers();
+        atmLayer.addData(nearest);
+        map.fitBounds(
+            atmLayer.getBounds().extend(latlng),
+            {maxZoom: 16});
+    });
+}</pre>
+
+</div>
+<div><p>Demo</p>
+<p><a href="atms-along.html">Find ATMs along a route</a></p>
+</div>
+<div><pre>function findAtms(route) {
+    var line = <strong>turf.flip(turf.linestring(route.coordinates))</strong>,
+        buffered = <strong>turf.buffer(line, 1000, 'meters')</strong>,
+        nearbyAtms = <strong>turf.within(atms, buffered)</strong>;
+
+        [...]
+}</pre>
+
+</div>
+<div><pre>map.on('mousemove', function(e) {
+    var p = <strong>turf.point([e.latlng.lng, e.latlng.lat])</strong>,
+        pointOnLine = <strong>turf.pointOnLine(line, p)</strong>,
+        nearest = <strong>turf.nearest(pointOnLine, nearbyAtms)</strong>;
+    lineMarker.clearLayers();
+    lineMarker.addData(pointOnLine);
+    closestAtm.clearLayers();
+    closestAtm.addData(nearest);
+});</pre>
+
+</div>
+<div><p><a href="http://turfjs.org/static/docs/">Beautifully documented</a></p>
+</div>
