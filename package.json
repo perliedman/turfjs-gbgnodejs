@@ -9,10 +9,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "leaflet": "^0.7.3",
-    "leaflet-routing-machine": "^2.3.0",
+    "leaflet": "^1.0.3",
+    "leaflet-routing-machine": "^3.2.5",
     "query-overpass": "^1.0.0",
-    "reqwest": "^1.1.5",
-    "turf": "^2.0.2"
+    "reqwest": "^2.0.5",
+    "turf": "^3.0.14"
   }
 }
